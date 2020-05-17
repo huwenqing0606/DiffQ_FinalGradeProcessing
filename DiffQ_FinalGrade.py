@@ -74,13 +74,13 @@ for i in range(num_stu):
     #calculate the total score
     complete_info_list[i][3]=int(complete_info_list[i][4]+complete_info_list[i][5]+complete_info_list[i][6]+complete_info_list[i][7]+complete_info_list[i][8])
     #determine the grade
-    if complete_info_list[i][3] >= 400:
+    if complete_info_list[i][3] >= 405:
         complete_info_list[i][2]='A'
-    elif complete_info_list[i][3] >= 355:
+    elif complete_info_list[i][3] >= 360:
         complete_info_list[i][2]='B'
-    elif complete_info_list[i][3] >= 310:
+    elif complete_info_list[i][3] >= 305:
         complete_info_list[i][2]='C'
-    elif complete_info_list[i][3] >= 265:
+    elif complete_info_list[i][3] >= 270:
         complete_info_list[i][2]='D'
     else:
         complete_info_list[i][2]='F'
