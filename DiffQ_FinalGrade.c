@@ -163,19 +163,19 @@ int main(){
 				}
 		}
 		//give the grades
-		if (semester_score[i]>=400)
+		if (semester_score[i]>=405)
 			semester_grade[i]='A';
 		else
-			if (semester_score[i]>=355)
+			if (semester_score[i]>=360)
 				semester_grade[i]='B';
 			else
-				if (semester_score[i]>=300)
+				if (semester_score[i]>=305)
 					semester_grade[i]='C';
 				else
-					if (semester_score[i]>=265)
-						semester_grade[i]='C';
+					if (semester_score[i]>=270)
+						semester_grade[i]='D';
 					else
-						semester_grade[i]='C';
+						semester_grade[i]='F';
 		//print everything to file
 		fprintf(output, "%s, %d, %c, %f, ", student_name[i], student_id[i], semester_grade[i], semester_score[i]);
 		fprintf(output, "%f, %f, %f, %f, %f, %c, %f \n", final[i], mid1[i], mid2[i], mid3[i], hw[i], ifadjustmid[i], adjusted_smallest_mid[i]);
