@@ -19,6 +19,7 @@ int main(){
 	FILE *fp = NULL;
 	char *line;
 	char buffer[1024];
+	char *student_name[200];
 	int student_id[200];
 	float final[200];
 	float mid1[200];
@@ -31,6 +32,8 @@ int main(){
 	float adjusted_smallest_mid[200];
 	int line_number=0;
 	//read the data from DiffQ_Gradebook.csv
+	//imput data file column structure: student name, student id, final, mid1, mid2, mid3, hw
+	//all empty blocks must be filled by 0
 	if ((fp = fopen("DiffQ_Gradebook.csv", "at+")) != NULL)
 	{
 		char *record = NULL;
@@ -44,7 +47,10 @@ int main(){
 				{
 					//save the id and scores data
 					switch (column_number)
-					{
+					{  case 1:
+						   student_name[line_number]=(char *)malloc(100*sizeof(char));
+						   strcpy(student_name[line_number], record);
+						   break;
 					   case 2:
 						   student_id[line_number] = atoi(record);
 						   break;
@@ -85,6 +91,10 @@ int main(){
 	num_students = line_number-1;
 	printf("Num Students = %d \n", num_students);
 	int i;
+	//set the output file
+	FILE *output=NULL;
+	output=fopen("DiffQ_Gradebook_Final.csv","w");
+	fprintf(output, "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s \n", "student name", "student id", "semester grade", "semester score", "final", "midterm1", "midterm2", "midterm3", "homework", "if adjust midterm?", "adjusted smallest midterm");
 	for (i=1;i<=num_students;i++){
 		//calculate the midterm and final percentages
 		float percentage_mid[3], percentage_final;
@@ -166,16 +176,10 @@ int main(){
 						semester_grade[i]='C';
 					else
 						semester_grade[i]='C';
-		//print everything
-		printf("%d ", student_id[i]);
-		printf(", %f ", final[i]);
-		printf(", %f ", mid1[i]);
-		printf(", %f ", mid2[i]);
-		printf(", %f ", mid3[i]);
-		printf(", %f ", hw[i]);
-		printf(", %c , %f ", ifadjustmid[i], adjusted_smallest_mid[i]);
-		printf(", %f ", semester_score[i]);
-		printf(", %c \n", semester_grade[i]);
+		//print everything to file
+		fprintf(output, "%s, %d, %c, %f, ", student_name[i], student_id[i], semester_grade[i], semester_score[i]);
+		fprintf(output, "%f, %f, %f, %f, %f, %c, %f \n", final[i], mid1[i], mid2[i], mid3[i], hw[i], ifadjustmid[i], adjusted_smallest_mid[i]);
 	}
+	fclose(output);
 return 0;
 }
