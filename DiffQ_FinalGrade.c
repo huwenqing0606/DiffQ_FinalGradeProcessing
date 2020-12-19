@@ -1,7 +1,7 @@
 /*
  * Processing The Final Grades for MATH 3304 Elementary Differential Equations at Missouri S&T
  *
- *  Created on: 2020年5月17日
+ *  Created on: 2020 Spring
  *      Author: Wenqing Hu (Missouri S&T)
  */
 
@@ -9,9 +9,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-const float final_full=150;
-const float mid1_full=50;
-const float mid2_full=50;
+const float final_full=200;
+const float mid1_full=100;
+const float mid2_full=100;
 const float mid3_full=100;
 
 
@@ -19,7 +19,8 @@ int main(){
 	FILE *fp = NULL;
 	char *line;
 	char buffer[1024];
-	char *student_name[200];
+	char *student_name_1[200];
+	char *student_name_2[200];
 	int student_id[200];
 	float final[200];
 	float mid1[200];
@@ -38,7 +39,7 @@ int main(){
 	{
 		char *record = NULL;
 		int column_number=1;
-		fseek(fp, 170L, SEEK_SET);  //locate to 2nd line, each letter size 1
+		fseek(fp, 0, SEEK_SET);  //locate to the beginning of file
 		while ((line = fgets(buffer, sizeof(buffer), fp))!=NULL)	//get the whole line from the gradebook
 		{
 			if (line_number!=0){
@@ -48,32 +49,37 @@ int main(){
 					//save the id and scores data
 					switch (column_number)
 					{  case 1:
-						   student_name[line_number]=(char *)malloc(100*sizeof(char));
-						   strcpy(student_name[line_number], record);
+						   student_name_1[line_number]=(char *)malloc(100*sizeof(char));
+						   strcpy(student_name_1[line_number], record);
 						   break;
 					   case 2:
-						   student_id[line_number] = atoi(record);
+						   student_name_2[line_number]=(char *)malloc(100*sizeof(char));
+						   strcpy(student_name_2[line_number], record);
 						   break;
 					   case 3:
-						   final[line_number] = atof(record);
+						   student_id[line_number] = atoi(record);
 						   break;
 					   case 4:
-						   mid1[line_number] = atof(record);
+						   final[line_number] = atof(record);
 						   break;
 					   case 5:
-						   mid2[line_number] = atof(record);
+						   mid1[line_number] = atof(record);
 						   break;
 					   case 6:
-						   mid3[line_number] = atof(record);
+						   mid2[line_number] = atof(record);
 						   break;
 					   case 7:
+						   mid3[line_number] = atof(record);
+						   break;
+					   case 8:
 						   hw[line_number] = atof(record);
 						   break;
 					}
 					ifadjustmid[line_number]='N';
 					adjusted_smallest_mid[line_number]=0;
 					printf("%s ", record);	//print the current data
-					if (column_number == 7)  //only the first 7 columns are recorded [name, id, final, mid1, mid2, mid3, hw]
+					if (column_number == 8)  
+					//only the first 8 columns are recorded [name_1, name_2, id, final, mid1, mid2, mid3, hw]
 						break;
 					record = strtok(NULL, ",");
 					column_number++;
@@ -94,7 +100,7 @@ int main(){
 	//set the output file
 	FILE *output=NULL;
 	output=fopen("DiffQ_Gradebook_Final.csv","w");
-	fprintf(output, "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s \n", "student name", "student id", "semester grade", "semester score", "final", "midterm1", "midterm2", "midterm3", "homework", "if adjust midterm?", "adjusted smallest midterm");
+	fprintf(output, "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s \n", "name", "id", "grade", "total", "final", "mid1", "mid2", "mid3", "hw", "adjust?", "adjusted min mid");
 	for (i=1;i<=num_students;i++){
 		//calculate the midterm and final percentages
 		float percentage_mid[3], percentage_final;
@@ -163,21 +169,21 @@ int main(){
 				}
 		}
 		//give the grades
-		if (semester_score[i]>=405)
+		if (semester_score[i]>=540)
 			semester_grade[i]='A';
 		else
-			if (semester_score[i]>=360)
+			if (semester_score[i]>=480)
 				semester_grade[i]='B';
 			else
-				if (semester_score[i]>=305)
+				if (semester_score[i]>=420)
 					semester_grade[i]='C';
 				else
-					if (semester_score[i]>=270)
+					if (semester_score[i]>=360)
 						semester_grade[i]='D';
 					else
 						semester_grade[i]='F';
 		//print everything to file
-		fprintf(output, "%s, %d, %c, %f, ", student_name[i], student_id[i], semester_grade[i], semester_score[i]);
+		fprintf(output, "%s, %s, %d, %c, %f, ", student_name_1[i], student_name_2[i], student_id[i], semester_grade[i], semester_score[i]);
 		fprintf(output, "%f, %f, %f, %f, %f, %c, %f \n", final[i], mid1[i], mid2[i], mid3[i], hw[i], ifadjustmid[i], adjusted_smallest_mid[i]);
 	}
 	fclose(output);
