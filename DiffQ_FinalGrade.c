@@ -32,6 +32,14 @@ int main(){
 	char ifadjustmid[200];
 	float adjusted_smallest_mid[200];
 	int line_number=0;
+	int semester_total = 600;
+	int A_cutoff = 540;
+	int B_cutoff = 480;
+	int C_cutoff = 420;
+	int D_cutoff = 360;
+	int round_threshold = 5;
+	char ifroundgrade[200];
+	char roundedgrade[200];
 	//read the data from DiffQ_Gradebook.csv
 	//imput data file column structure: student name, student id, final, mid1, mid2, mid3, hw
 	//all empty blocks must be filled by 0
@@ -76,6 +84,8 @@ int main(){
 						   break;
 					}
 					ifadjustmid[line_number]='N';
+					ifroundgrade[line_number]='N';
+					roundedgrade[line_number]=' ';
 					adjusted_smallest_mid[line_number]=0;
 					printf("%s ", record);	//print the current data
 					if (column_number == 8)  
@@ -100,7 +110,9 @@ int main(){
 	//set the output file
 	FILE *output=NULL;
 	output=fopen("DiffQ_Gradebook_Final.csv","w");
-	fprintf(output, "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s \n", "name", "id", "grade", "total", "final", "mid1", "mid2", "mid3", "hw", "adjust?", "adjusted min mid");
+	fprintf(output, "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s \n", 
+			"name", "id", "grade", "total", "final", "mid1", "mid2", "mid3", "hw", 
+			"adjust?", "adjusted min mid", "round?", "rounded grade");
 	for (i=1;i<=num_students;i++){
 		//calculate the midterm and final percentages
 		float percentage_mid[3], percentage_final;
@@ -169,22 +181,53 @@ int main(){
 				}
 		}
 		//give the grades
-		if (semester_score[i]>=540)
+		if (semester_score[i]>=A_cutoff)
 			semester_grade[i]='A';
 		else
-			if (semester_score[i]>=480)
+			if (semester_score[i]>=B_cutoff){
 				semester_grade[i]='B';
+				if (semester_score[i]>=A_cutoff-round_threshold){
+					ifroundgrade[i]='Y';
+					roundedgrade[i]='A';}
+				}
 			else
-				if (semester_score[i]>=420)
+				if (semester_score[i]>=C_cutoff){
 					semester_grade[i]='C';
+					if (semester_score[i]>=B_cutoff-round_threshold){
+						ifroundgrade[i]='Y';
+						roundedgrade[i]='B';}
+					}
 				else
-					if (semester_score[i]>=360)
+					if (semester_score[i]>=D_cutoff){
 						semester_grade[i]='D';
+						if (semester_score[i]>=C_cutoff-round_threshold){
+							ifroundgrade[i]='Y';
+							roundedgrade[i]='C';}
+						}
 					else
+						{
 						semester_grade[i]='F';
+						if (semester_score[i]>=D_cutoff-round_threshold){
+							ifroundgrade[i]='Y';
+							roundedgrade[i]='D';}						
+						}
 		//print everything to file
-		fprintf(output, "%s, %s, %d, %c, %f, ", student_name_1[i], student_name_2[i], student_id[i], semester_grade[i], semester_score[i]);
-		fprintf(output, "%f, %f, %f, %f, %f, %c, %f \n", final[i], mid1[i], mid2[i], mid3[i], hw[i], ifadjustmid[i], adjusted_smallest_mid[i]);
+		fprintf(output, "%s, %s, %d, %c, %f, ", 
+				student_name_1[i], 
+				student_name_2[i], 
+				student_id[i], 
+				semester_grade[i], 
+				semester_score[i]);
+		fprintf(output, "%f, %f, %f, %f, %f, %c, %f, %c, %c \n", 
+				final[i], 
+				mid1[i], 
+				mid2[i], 
+				mid3[i], 
+				hw[i], 
+				ifadjustmid[i], 
+				adjusted_smallest_mid[i], 
+				ifroundgrade[i], 
+				roundedgrade[i]);
 	}
 	fclose(output);
 return 0;
